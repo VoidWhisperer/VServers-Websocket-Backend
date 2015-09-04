@@ -1,6 +1,5 @@
 package net.voksul.vservers_websocket;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -9,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -19,28 +17,29 @@ import java.util.HashMap;
 public class VultrQueryModule {
     //This class centralizes all of the code related to contacting vultr's servers to query and create new servers, along with shutting them down
     String location;
-    HashMap<String,String> dcids = new HashMap<String,String>();
+    HashMap<String, String> dcids = new HashMap<String, String>();
     public static final String api_key = "Vultr-Api-Key-Here";
     public final String SNAPSHOTID = "Snapshot-Id-Here"; //This is the ID from vultr of the snapshot that stores the server image containing the pre-configured TF2 server.
+
     public VultrQueryModule(String location) {
         //This constructor is only used when creating a server - the querying and deletion is done by the static methods
         this.location = location;
 
         //Establish the list of locations that can have servers created and their related DC IDs
-        dcids.put("New Jersey","1");
-        dcids.put("Atlanta","6");
-        dcids.put("Chicago","2");
-        dcids.put("Dallas","3");
-        dcids.put("LosAngeles","5");
-        dcids.put("Miami","39");
-        dcids.put("Seattle","4");
-        dcids.put("SiliconValley","12");
-        dcids.put("Tokyo","25");
-        dcids.put("London","8");
+        dcids.put("New Jersey", "1");
+        dcids.put("Atlanta", "6");
+        dcids.put("Chicago", "2");
+        dcids.put("Dallas", "3");
+        dcids.put("LosAngeles", "5");
+        dcids.put("Miami", "39");
+        dcids.put("Seattle", "4");
+        dcids.put("SiliconValley", "12");
+        dcids.put("Tokyo", "25");
+        dcids.put("London", "8");
         dcids.put("Frankfurt", "9");
-        dcids.put("Australia","19");
-        dcids.put("Amsterdam","7");
-        dcids.put("Paris","24");
+        dcids.put("Australia", "19");
+        dcids.put("Amsterdam", "7");
+        dcids.put("Paris", "24");
     }
 
     public JSONObject run() {
@@ -49,8 +48,7 @@ public class VultrQueryModule {
         String dcid = "-1";
 
         //Check to see if the chosen location exists
-        if(dcids.get(location) != null)
-        {
+        if (dcids.get(location) != null) {
             locExists = true;
             dcid = dcids.get(location);
         }
@@ -63,7 +61,7 @@ public class VultrQueryModule {
                 conn2.setRequestMethod("POST");
 
                 //This specifies the DCID and the other information
-                String data = "DCID=" + dcid + "&VPSPLANID=29&SNAPSHOTID="+SNAPSHOTID+"&OSID=164";
+                String data = "DCID=" + dcid + "&VPSPLANID=29&SNAPSHOTID=" + SNAPSHOTID + "&OSID=164";
                 conn2.getOutputStream().write(data.getBytes());
                 conn2.connect();
 
@@ -119,11 +117,10 @@ public class VultrQueryModule {
         HttpURLConnection conn2 = (HttpURLConnection) new URL("https://api.vultr.com/v1/server/destroy?api_key=" + api_key).openConnection();
         conn2.setDoOutput(true);
         conn2.setRequestMethod("POST");
-        String data = "SUBID="+subid;
+        String data = "SUBID=" + subid;
         conn2.getOutputStream().write(data.getBytes());
         conn2.connect();
-        if(conn2.getResponseCode() == 200)
-        {
+        if (conn2.getResponseCode() == 200) {
             return null;
         }
         return null;
